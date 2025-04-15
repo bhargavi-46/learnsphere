@@ -131,44 +131,44 @@ Create a `.env` file in the project root and define the following variables with
 
 
 ## Project Structure
-course-platform/
-├── config/ # Connection settings (DB, Azure, Razorpay)
-│ ├── db.js
-│ ├── azure.js
-│ └── razorpay.js
-├── controllers/ # Core application logic for handling requests
-│ ├── authController.js
-│ ├── courseController.js
-│ ├── paymentController.js
-│ └── adminController.js
-├── middleware/ # Request processing checkpoints (Auth, File Uploads)
-│ ├── authMiddleware.js
-│ └── uploadMiddleware.js
-├── models/ # Mongoose schemas (Data blueprints for MongoDB)
-│ ├── User.js
-│ ├── Course.js
-│ └── Enrollment.js
-├── public/ # Static files served directly to the browser
-│ ├── css/
-│ ├── js/
-│ └── img/
-├── routes/ # Defines URL paths and maps them to controllers
-│ ├── authRoutes.js
-│ ├── courseRoutes.js
-│ ├── paymentRoutes.js
-│ ├── adminRoutes.js
-│ ├── indexRoutes.js # Home page route
-│ └── userRoutes.js # User dashboard route
-├── views/ # EJS templates for generating HTML
-│ ├── partials/ # Reusable EJS snippets (header, footer, navbar)
-│ ├── auth/
-│ ├── courses/
-│ ├── user/
-│ ├── admin/
-│ ├── index.ejs # Home page template
-│ └── error.ejs # Generic error page template
-├── .env # Environment variables (KEEP SECRET - Add to .gitignore)
-├── .gitignore # Files/folders ignored by Git (node_modules, .env)
-├── package.json # Project metadata and dependencies
-├── package-lock.json # Exact dependency versions
-└── server.js # Main application entry point
+
+*   **`config/`**: Connection settings (DB, Azure, Razorpay)
+    *   `db.js`
+    *   `azure.js`
+    *   `razorpay.js`
+*   **`controllers/`**: Core application logic for handling requests
+    *   `authController.js`
+    *   `courseController.js`
+    *   `paymentController.js`
+    *   `adminController.js`
+*   **`middleware/`**: Request processing checkpoints (Auth, File Uploads)
+    *   `authMiddleware.js`
+    *   `uploadMiddleware.js`
+*   **`models/`**: Mongoose schemas (Data blueprints for MongoDB)
+    *   `User.js`
+    *   `Course.js`
+    *   `Enrollment.js`
+*   **`public/`**: Static files served directly to the browser
+    *   `css/`
+    *   `js/`
+    *   `img/`
+*   **`routes/`**: Defines URL paths and maps them to controllers
+    *   `authRoutes.js`
+    *   `courseRoutes.js`
+    *   `paymentRoutes.js`
+    *   `adminRoutes.js`
+    *   `indexRoutes.js` (Home page route)
+    *   `userRoutes.js` (User dashboard route)
+*   **`views/`**: EJS templates for generating HTML
+    *   `partials/` (Reusable EJS snippets: header, footer, navbar)
+    *   `auth/`
+    *   `courses/`
+    *   `user/`
+    *   `admin/`
+    *   `index.ejs` (Home page template)
+    *   `error.ejs` (Generic error page template)
+*   **`.env`**: Environment variables (KEEP SECRET - Add to .gitignore)
+*   **`.gitignore`**: Files/folders ignored by Git (node_modules, .env)
+*   **`package.json`**: Project metadata and dependencies
+*   **`package-lock.json`**: Exact dependency versions
+*   **`server.js`**: Main application entry point
