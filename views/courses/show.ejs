@@ -1,0 +1,278 @@
+<%- include('../partials/header', { title: course.title }) %>
+<%- include('../partials/navbar', { user: user }) %> <!-- Pass user for potential prefill -->
+
+<main>
+     <section id="course-details-page" class="page-section active">
+        <div class="container">
+             <div class="course-hero-header animate-on-scroll">
+                <h1><%= course.title %></h1>
+                <!-- Display uploader username safely -->
+                <p class="uploader">Instructor: <%= course.uploader?.username || 'Unknown Instructor' %></p>
+             </div>
+
+             <div class="course-content">
+                 <div class="course-main-area">
+                     <div class="video-container animate-on-scroll" id="video-player-wrapper">
+
+                        <%# --- Conditional Video/Placeholder Display --- %>
+                        <% if (videoAccessUrl) { %>
+
+                            <!-- === VIDEO PLAYER (Access Granted) === -->
+                            <video id="course-video-player"
+                                   controls
+                                   controlsList="nodownload" <%# Prevent download button in some browsers %>
+                                   style="display: block; width:100%; height:100%;" <%# Ensure video fills container %>
+                                   poster="<%= course.thumbnailUrl || '' %>"> <%# Show thumbnail before load %>
+                                <source src="<%= videoAccessUrl %>" type="video/mp4"> <%# ASSUME MP4 - Adjust type if needed %>
+                                Your browser does not support the HTML5 video tag. Please update your browser.
+                            </video>
+
+                        <% } else { %>
+
+                            <!-- === PLACEHOLDER (No Access) - Centered IMG Tag === -->
+                            <%# Styles for centering/max-size are now in style.css for .video-placeholder and its img %>
+                            <div class="video-placeholder">
+
+                                <!-- Display Thumbnail using IMG tag -->
+                                <img src="<%= course.thumbnailUrl || 'https://via.placeholder.com/800x450/222222/aaaaaa?text=Thumbnail+Not+Available' %>"
+                                     alt="<%= course.title %> Thumbnail Preview">
+
+                                <!-- Overlay Text -->
+                                <div class="placeholder-overlay-text">
+                                   <% if (enrollmentError) { %>
+                                       <span><%= enrollmentError %></span> <%# Show specific error if video couldn't load %>
+                                   <% } else if (typeof user !== 'undefined' && user) { %> <%# Only show purchase msg if logged in %>
+                                       <span>Purchase course to watch video content</span>
+                                   <% } else { %> <%# Prompt login if not logged in %>
+                                        <span><a href="/auth/login?returnTo=<%= encodeURIComponent(req.originalUrl || req.url) %>" style="color: inherit; text-decoration: underline;">Login</a> or purchase to watch</span>
+                                   <% } %>
+                                </div>
+
+                            </div>
+                            <!-- === End of Placeholder === -->
+
+                        <% } %>
+                        <%# --- End Conditional Display --- %>
+
+                     </div>
+
+                     <%# Display video loading errors separately if needed %>
+                     <% if (enrollmentError && videoAccessUrl) { %>
+                        <div class="error-message animate-on-scroll" style="margin-top: 1rem;"><%= enrollmentError %></div>
+                     <% } %>
+
+
+                     <div class="course-description animate-on-scroll">
+                         <h2>Course Overview</h2>
+                         <!-- Use <%- %> for description to allow HTML tags if ever needed, otherwise use <%= %> -->
+                         <!-- Replace newline characters with <br> tags for display -->
+                         <p><%- course.description ? course.description.replace(/\r?\n/g, '<br>') : 'No description available.' %></p>
+                         <!-- Add more sections like 'What you'll learn' if stored separately in your model -->
+                     </div>
+                 </div>
+
+                 <aside class="course-actions animate-on-scroll">
+                    <%# --- Conditional Action/Price Display --- %>
+                    <% if (isEnrolled) { %>
+
+                        <div class="price" id="course-price">Enrolled</div>
+                        <p class="enrolled-message">✔️ You have access!</p>
+                        <a href="#video-player-wrapper" class="btn btn-secondary">Go to Video</a>
+
+                    <% } else if (course.price === 0) { %>
+
+                         <div class="price free" id="course-price">Free</div>
+                          <% if (typeof user !== 'undefined' && user) { %>
+                             <form action="/courses/<%= course._id %>/enroll-free" method="POST" style="margin:0;">
+                                <button type="submit" class="btn btn-primary">Start Learning Now</button>
+                             </form>
+                         <% } else { %>
+                             <a href="/auth/login?returnTo=<%= encodeURIComponent(req.originalUrl || req.url) %>" class="btn btn-primary">Login to Enroll Free</a>
+                         <% } %>
+
+                    <% } else { %> <%# Paid Course, Not Enrolled %>
+
+                        <div class="price" id="course-price">$<%= course.price ? course.price.toFixed(2) : 'N/A' %></div>
+                         <% if (typeof user !== 'undefined' && user) { %>
+                            <button id="buy-now-button" class="btn btn-primary" data-course-id="<%= course._id %>">Enroll Now & Start Learning</button>
+                            <p style="font-size: 0.85rem; color: var(--text-medium); margin-top: 1rem;">Lifetime access & future updates</p>
+                         <% } else { %>
+                            <a href="/auth/login?returnTo=<%= encodeURIComponent(req.originalUrl || req.url) %>" class="btn btn-primary">Login to Enroll</a>
+                         <% } %>
+
+                    <% } %>
+                    <%# --- End Conditional Action/Price Display --- %>
+
+
+                     <%# --- Conditional Video Controls Display --- %>
+                     <% if (videoAccessUrl) { %>
+                        <!-- Only show controls if video is accessible -->
+                        <div class="video-controls" id="video-controls-container" style="margin-top: 1.5rem;">
+                             <label for="speed-control">Speed:</label>
+                             <select id="speed-control">
+                                 <option value="0.5">0.5x</option>
+                                 <option value="0.75">0.75x</option>
+                                 <option value="1" selected>1x</option>
+                                 <option value="1.25">1.25x</option>
+                                 <option value="1.5">1.5x</option>
+                                 <option value="2">2x</option>
+                             </select>
+                         </div>
+                    <% } %>
+                    <%# --- End Conditional Video Controls Display --- %>
+
+                 </aside>
+             </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>
+
+<!-- Scripts specific to this page -->
+<%# --- Conditional Razorpay Script --- %>
+<%# Only include if user is logged in, not enrolled, and course is paid %>
+<% if (typeof user !== 'undefined' && user && typeof isEnrolled !== 'undefined' && !isEnrolled && course.price > 0) { %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        const buyButton = document.getElementById('buy-now-button');
+        // Ensure Razorpay Key ID is passed correctly from controller
+        const razorpayKeyId = '<%= razorpayKeyId || "" %>';
+
+        if (buyButton && razorpayKeyId) {
+            buyButton.addEventListener('click', async (e) => {
+                const courseId = e.target.dataset.courseId;
+                // Basic escaping for display in Razorpay modal description
+                const courseTitle = "<%= course.title.replace(/[`$'"]/g, '') %>";
+
+                if (!courseId) {
+                    console.error("Course ID not found on button.");
+                    alert("Error initiating payment. Course ID missing.");
+                    return;
+                }
+
+                try {
+                    // Show loading state
+                    buyButton.textContent = 'Processing...';
+                    buyButton.disabled = true;
+
+                    // 1. Create Order on backend
+                    const response = await fetch('/payment/create-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Add CSRF token header here if using csurf
+                        },
+                        body: JSON.stringify({ courseId: courseId })
+                    });
+
+                    if (!response.ok) {
+                        let errorMsg = `Failed to create order (Status: ${response.status})`;
+                        try {
+                            const errorData = await response.json();
+                            errorMsg = errorData.error || errorMsg;
+                        } catch (jsonError) { console.error("Could not parse error JSON:", jsonError); }
+                        throw new Error(errorMsg);
+                    }
+
+                    const order = await response.json();
+                    console.log("Razorpay Order created:", order);
+
+                    // 2. Open Razorpay Checkout
+                    const options = {
+                        key: razorpayKeyId,
+                        amount: order.amount, // Amount in paise
+                        currency: order.currency || "INR",
+                        name: "LearnSphere", // Your Platform Name
+                        description: `Enroll in: ${courseTitle}`,
+                        image: "/img/logo.png", // Optional: Your logo URL in public/img
+                        order_id: order.id,
+                        // ==========================================================
+                        //                *** HANDLER UPDATE ***
+                        // ==========================================================
+                        handler: function (response) {
+                            // SUCCESS HANDLER - Verification happens via WEBHOOK on backend
+                            console.log("Razorpay Payment Successful (Client):", response);
+
+                            // 1. Show the success message
+                            alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}. Access should be granted shortly.`);
+
+                            // 2. Introduce a delay (e.g., 2.5 seconds) before reloading
+                            // This gives the backend webhook time to process. Adjust delay if needed.
+                            if(buyButton) { // Check if button still exists
+                                buyButton.textContent = 'Granting Access...';
+                                // Keep it disabled during the wait
+                            }
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2500); // Reload after 2500 milliseconds (2.5 seconds)
+                        },
+                        // ==========================================================
+                        //              *** END HANDLER UPDATE ***
+                        // ==========================================================
+                        prefill: {
+                            name: "<%= user.username %>", // Prefill logged-in user details
+                            email: "<%= user.email %>",
+                        },
+                        notes: order.notes, // Pass notes from backend order creation
+                        theme: {
+                            color: "#1a237e" // Match primary color variable
+                        },
+                        modal: {
+                           ondismiss: function(){
+                                console.log('Checkout form closed by user.');
+                                // Re-enable button if user closes modal without paying
+                                if(buyButton){
+                                    buyButton.textContent = 'Enroll Now & Start Learning';
+                                    buyButton.disabled = false;
+                                }
+                           }
+                        }
+                    };
+
+                    const rzp = new Razorpay(options);
+
+                    rzp.on('payment.failed', function (response) {
+                        console.error("Razorpay Payment Failed (Client):", response);
+                        let errorMsg = "Payment Failed.";
+                        if (response.error) {
+                            errorMsg += `\nReason: ${response.error.description || 'Unknown'}`;
+                            errorMsg += ` (Code: ${response.error.code || 'N/A'})`;
+                            if(response.error.metadata?.order_id) errorMsg += `\nOrder ID: ${response.error.metadata.order_id}`;
+                        }
+                         alert(errorMsg);
+                         // Re-enable button after failure
+                         if(buyButton){
+                            buyButton.textContent = 'Enroll Now & Start Learning';
+                            buyButton.disabled = false;
+                         }
+                    });
+
+                    rzp.open(); // Open the checkout modal
+
+                } catch (error) {
+                    console.error('Payment Initiation Error:', error);
+                    alert(`Could not initiate payment: ${error.message}`);
+                    // Re-enable button on error
+                    if(buyButton){
+                        buyButton.textContent = 'Enroll Now & Start Learning';
+                        buyButton.disabled = false;
+                    }
+                }
+            });
+        } else if(buyButton && !razorpayKeyId) {
+             console.error("Razorpay Key ID not found. Payment button disabled.");
+             buyButton.textContent = 'Payment Unavailable';
+             buyButton.disabled = true;
+        }
+    </script>
+<% } %>
+<%# --- End Conditional Razorpay Script --- %>
+
+
+<%# --- Conditional Video Player Script --- %>
+<% if (videoAccessUrl) { %>
+    <!-- Include video player JS only if video is shown -->
+    <script src="/js/video-player.js"></script>
+<% } %>
+<%# --- End Conditional Video Player Script --- %>

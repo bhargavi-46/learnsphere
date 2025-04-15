@@ -1,0 +1,22 @@
+<%- include('../partials/header', { title: 'Admin Dashboard' }) %>
+<%- include('../partials/navbar', { page: 'admin', user: user }) %>
+
+<main>
+    <section id="admin-dashboard" class="page-section active animate-on-scroll">
+         <div class="container">
+            <h2 class="section-title">Admin Control Panel</h2>
+             <p style="text-align: center; margin-bottom: 2rem; font-size: 1.1rem;">Welcome, <%= user.username %>! Manage courses and users.</p>
+
+             <!-- Use the structure from ui-demo-flux.html -->
+             <div class="admin-actions" style="display: flex; justify-content: center; gap: 1.5rem; text-align: center; background: var(--card-bg); padding: 2rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-medium);">
+                 <a href="/admin/courses/new" class="btn btn-primary">Upload New Course</a>
+                 <a href="/admin/courses" class="btn btn-secondary">Manage Existing Courses</a>
+                 <!-- Add links to view users etc. later -->
+             </div>
+
+             <!-- Add more dashboard elements like stats, recent uploads etc. later -->
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>

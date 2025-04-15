@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnSphere Flux - UI Concept Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Placeholder Icon Font/SVG library would go here -->
+    <style>
+        /* --- LearnSphere Flux UI Concept --- */
+
+        :root {
+            /* Colors */
+            --primary-start: #1a237e; /* Deep Space Blue */
+            --primary-end: #673ab7;   /* Electric Purple */
+            --secondary-bg: #f8f9fa; /* Off-white */
+            --card-bg: rgba(255, 255, 255, 0.95); /* Slightly transparent white for cards */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-dark: #212529;
+            --text-medium: #495057;
+            --text-light: #6c757d;
+            --accent-neon-cyan: #00ffff;
+            --accent-neon-pink: #ff00ff; /* Or choose one primary neon */
+            --accent-neon-glow: var(--accent-neon-cyan); /* Use cyan for glows */
+            --border-color: #dee2e6;
+
+            /* Typography */
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+
+            /* Layout & Effects */
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --shadow-lifted: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --shadow-glow: 0 0 12px 3px hsla(180, 100%, 50%, 0.4); /* Cyan Glow */
+            --transition-smooth: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --perspective-depth: 2000px; /* For 3D effects */
+        }
+
+        /* --- Reset & Base Styles --- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: var(--font-body);
+            line-height: 1.7;
+            color: var(--text-medium);
+            background-color: var(--secondary-bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* Apply perspective for header 3D effects */
+            perspective: var(--perspective-depth);
+            /* Subtle gradient background */
+            background: linear-gradient(170deg, var(--secondary-bg) 60%, #e3e6f1 100%);
+        }
+
+        img { max-width: 100%; display: block; }
+        a { text-decoration: none; color: var(--primary-end); transition: color var(--transition-smooth); }
+        a:hover { color: var(--primary-start); }
+        .container { max-width: 1320px; margin: 0 auto; padding: 0 1.5rem; }
+        main { flex-grow: 1; padding: 3.5rem 0; }
+
+        /* --- Utility Classes --- */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-heading);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            text-align: center;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-soft);
+            transform: translateZ(5px); /* Slight initial lift */
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-end), var(--primary-start));
+            color: #fff;
+        }
+        .btn-primary:hover {
+            transform: translateY(-4px) translateZ(15px) scale(1.02);
+            box-shadow: var(--shadow-medium), var(--shadow-glow);
+            background: linear-gradient(45deg, var(--primary-start), var(--primary-end));
+        }
+
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--primary-end);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            transform: translateY(-3px) translateZ(10px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary-end);
+            color: var(--primary-start);
+        }
+        .btn-sm { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* --- Header / Navbar (3D Style) --- */
+        .main-header {
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            /* Required for child 3D transforms */
+            transform-style: preserve-3d;
+            transition: background-color 0.3s ease; /* Smooth bg change on scroll? */
+        }
+
+         /* Header Background Layer (appears recessed) */
+        .main-header::before {
+            content: '';
+            position: absolute;
+            top: -10%; bottom: -10%; left: 0; right: 0; /* Extend slightly */
+            background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(248, 249, 250, 0.9));
+            backdrop-filter: blur(8px); /* Glassmorphism hint */
+            box-shadow: var(--shadow-medium);
+            border-bottom: 1px solid var(--glass-border);
+            transform: translateZ(-30px) scale(1.1); /* Push back and scale */
+            z-index: -2;
+            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+        }
+
+        /* Static Parallax Simulation Layer (needs JS for real effect) */
+        .main-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+             /* Example: Subtle abstract gradient */
+             background: linear-gradient(45deg, hsla(260, 60%, 80%, 0.1), hsla(200, 70%, 80%, 0.1) );
+            transform: translateZ(-50px) scale(1.2); /* Further back */
+            z-index: -3;
+             opacity: 0.5;
+            pointer-events: none;
+        }
+
+
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-start);
+            white-space: nowrap;
+            /* Floating effect */
+            transform: translateZ(20px);
+            transition: transform 0.5s ease-out;
+            animation: logoLoad 1s ease-out forwards; /* Load animation */
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        @keyframes logoLoad {
+            from { opacity: 0; transform: translateZ(20px) scale(0.8) rotate(-10deg); }
+            to { opacity: 1; transform: translateZ(20px) scale(1) rotate(0deg); }
+        }
+
+        /* Search Bar */
+        .search-bar {
+            position: relative; flex-grow: 1; max-width: 450px;
+            /* Floating */
+            transform: translateZ(15px);
+        }
+        .search-bar input[type="search"] {
+            width: 100%;
+            padding: 0.8rem 1.2rem 0.8rem 3rem;
+            border: 1px solid transparent; /* Start transparent */
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50px; /* Pill shape */
+            font-size: 0.9rem;
+            font-family: var(--font-body);
+            transition: all var(--transition-smooth);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05), var(--shadow-soft);
+        }
+        .search-bar input[type="search"]:focus {
+            outline: none;
+            border-color: var(--primary-end);
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05), 0 0 0 3px hsla(180, 100%, 50%, 0.3), var(--shadow-medium); /* Neon focus glow */
+        }
+        .search-bar .search-icon {
+            position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%);
+            color: var(--text-light); font-size: 1.1rem; pointer-events: none;
+        }
+        .search-icon::before { content: '🔍'; /* Placeholder */ }
+
+        /* Navigation Links */
+        .nav-links { list-style: none; display: flex; white-space: nowrap; }
+        .nav-links li { margin-left: 2rem; }
+        .nav-links a {
+            font-family: var(--font-heading);
+            color: var(--text-medium);
+            font-weight: 500;
+            padding: 0.5rem 0.2rem;
+            position: relative;
+            transition: all var(--transition-smooth);
+            /* Floating */
+            display: inline-block; /* Needed for transform */
+            transform: translateZ(15px);
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -5px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--accent-neon-cyan), var(--accent-neon-pink));
+            transition: width var(--transition-smooth);
+            border-radius: 1px;
+            filter: brightness(1.1); /* Make neon brighter */
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-start);
+            transform: translateY(-3px) translateZ(25px); /* Lift on hover */
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        .nav-toggle { display: none; /* ... rest of toggle styles ... */ transform: translateZ(20px); }
+
+        /* --- Footer --- */
+        .main-footer {
+            background: linear-gradient(135deg, #2c3e50, #1a2938); /* Dark footer gradient */
+            color: #bdc3c7;
+            padding: 3rem 0;
+            text-align: center; margin-top: auto; font-size: 0.9rem;
+        }
+        .main-footer p { margin-bottom: 0.75rem; }
+        .main-footer a { color: #ecf0f1; font-weight: 500; }
+        .main-footer a:hover { color: var(--accent-neon-cyan); }
+
+        /* --- Page Sections (Animation Placeholder) --- */
+        .page-section {
+            display: none; /* JS will handle display */
+            /* Animation handled by JS (GSAP/Framer Motion) */
+            /* Example attributes for JS: data-animate="fade-slide-up" */
+        }
+        .page-section.active { display: block; } /* Basic show/hide for demo */
+
+        /* JS Animation Hint: Page Transition */
+        /* Use Framer Motion's AnimatePresence or GSAP Timeline for exit/enter */
+
+        /* JS Animation Hint: Scroll Trigger */
+        /* Elements with class 'animate-on-scroll' would be targeted by IntersectionObserver + GSAP/CSS Animation */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+             opacity: 1;
+             transform: translateY(0);
+         }
+
+
+        /* --- Home Page Styles --- */
+        #home-page .hero {
+            text-align: center; padding: 6rem 1.5rem;
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.85), rgba(103, 58, 183, 0.9)), url('https://via.placeholder.com/1600x600/cccccc/999999?text=Abstract+Background') center/cover no-repeat fixed; /* Fixed BG for simple parallax */
+            color: #fff;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 4rem;
+            position: relative; overflow: hidden;
+            box-shadow: var(--shadow-medium);
+        }
+        #home-page .hero h1 {
+            font-family: var(--font-heading); font-size: 3.8rem;
+            margin-bottom: 1.5rem; font-weight: 700;
+            text-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        #home-page .hero p {
+            font-size: 1.3rem; margin-bottom: 2.5rem;
+            max-width: 700px; margin-left: auto; margin-right: auto;
+            font-weight: 300;
+        }
+
+        /* --- Course Grid & Cards --- */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 2.8rem;
+        }
+
+        .course-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+            display: flex; flex-direction: column;
+             border: 1px solid transparent; /* For hover border */
+        }
+        .course-card:hover {
+            transform: translateY(-15px) scale(1.03); /* Lift more */
+            box-shadow: var(--shadow-lifted);
+            border-color: hsla(180, 100%, 50%, 0.3); /* Subtle neon border */
+        }
+        .course-card .card-image-container { position: relative; overflow: hidden; }
+        .course-card img {
+            width: 100%; height: 210px; object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .course-card:hover img { transform: scale(1.06); }
+
+        .course-card-content { padding: 1.8rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .course-card-content h3 {
+            font-family: var(--font-heading); font-size: 1.5rem;
+            margin-bottom: 0.8rem; color: var(--text-dark); font-weight: 600;
+        }
+        .course-card-content p.description {
+            color: var(--text-medium); font-size: 0.95rem;
+            margin-bottom: 1.5rem; flex-grow: 1; line-height: 1.6;
+        }
+        .course-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: auto; padding-top: 1.2rem;
+            border-top: 1px solid #eee; /* Lighter border inside card */
+        }
+        .course-price {
+            font-family: var(--font-heading); font-weight: 700;
+            color: var(--primary-end); font-size: 1.3rem;
+        }
+        .course-price.free { color: #198754; font-weight: 600; }
+
+        /* --- Course Details Page --- */
+         #course-details-page .course-hero-header {
+             padding: 3.5rem 2.5rem;
+             background: linear-gradient(120deg, var(--primary-start), var(--primary-end));
+             color: #fff; border-radius: var(--border-radius-lg); margin-bottom: 3.5rem;
+             box-shadow: var(--shadow-medium);
+         }
+         #course-details-page .course-hero-header h1 { font-family: var(--font-heading); font-size: 3rem; margin-bottom: 0.5rem; text-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+         #course-details-page .course-hero-header .uploader { font-size: 1.1rem; opacity: 0.9; }
+
+        #course-details-page .course-content { display: grid; grid-template-columns: minmax(0, 2.5fr) minmax(300px, 1fr); gap: 3rem; }
+
+        #course-details-page .video-container {
+            background-color: #111; /* Darker bg for video */
+            border-radius: var(--border-radius-lg); overflow: hidden;
+             margin-bottom: 1.5rem; position: relative; padding-top: 56.25%;
+             box-shadow: var(--shadow-medium);
+             transition: box-shadow var(--transition-smooth); /* For glow */
+        }
+         /* Class added by JS when video plays */
+        #course-details-page .video-container.video-playing-glow {
+             box-shadow: var(--shadow-medium), 0 0 15px 4px var(--accent-neon-glow);
+             animation: pulseGlow 2.5s infinite alternate ease-in-out;
+        }
+        @keyframes pulseGlow {
+            from { box-shadow: var(--shadow-medium), 0 0 10px 2px hsla(180, 100%, 50%, 0.3); }
+            to { box-shadow: var(--shadow-medium), 0 0 20px 6px hsla(180, 100%, 50%, 0.5); }
+        }
+
+        #course-details-page .video-container video,
+        #course-details-page .video-container .video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: var(--border-radius-lg); }
+        #course-details-page .video-placeholder { background-color: #222; display: flex; justify-content: center; align-items: center; color: #aaa; font-size: 1.2rem; text-align: center; padding: 1rem; }
+
+        #course-details-page .course-description { margin-bottom: 2rem; }
+        #course-details-page .course-description h2 { font-family: var(--font-heading); margin-bottom: 1.2rem; font-size: 2rem; color: var(--text-dark); }
+        #course-details-page .course-description p, #course-details-page .course-description ul { color: var(--text-medium); margin-bottom: 1rem; }
+        #course-details-page .course-description ul { list-style-position: inside; margin-left: 1rem; }
+        #course-details-page .course-description strong { color: var(--text-dark); font-weight: 600; }
+
+         /* Sidebar with Glassmorphism Hint */
+         #course-details-page .course-actions {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem; border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium); text-align: center;
+            height: fit-content; position: sticky; top: calc(1.5rem + 80px); /* Adjust top offset */
+         }
+         #course-details-page .course-actions .price {
+             font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700;
+             color: var(--primary-start); margin-bottom: 1.8rem;
+             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+         }
+         #course-details-page .course-actions .price.free { color: #198754; font-size: 1.8rem; }
+         #course-details-page .course-actions .btn { width: 100%; margin-bottom: 1rem;}
+         #course-details-page .enrolled-message { color: #157347; font-weight: 600; margin-top: 1rem; font-size: 1.1rem; }
+         #course-details-page .video-controls { margin-top: 1.5rem; text-align: center; background: rgba(0,0,0,0.05); padding: 1rem; border-radius: var(--border-radius-md); }
+         #course-details-page .video-controls label { margin-right: 0.75rem; font-weight: 500; color: var(--text-dark); }
+         #course-details-page .video-controls select { padding: 0.5rem 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); font-family: var(--font-body); }
+
+        /* --- Login/Signup Form --- */
+        .auth-form-container {
+            max-width: 500px; margin: 3rem auto; padding: 3.5rem;
+            background-color: var(--card-bg); border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium);
+            border-top: 5px solid;
+            border-image: linear-gradient(90deg, var(--primary-start), var(--primary-end)) 1;
+        }
+        .auth-form-container h2 { font-family: var(--font-heading); text-align: center; margin-bottom: 2.5rem; color: var(--text-dark); }
+        .form-group { margin-bottom: 2rem; }
+        .form-group label { display: block; margin-bottom: 0.75rem; font-weight: 500; color: var(--text-medium); font-size: 0.9rem; }
+        .form-group input {
+            width: 100%; padding: 1rem 1.2rem; border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md); font-size: 1rem;
+            transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+            background-color: #fff;
+        }
+        .form-group input:focus {
+            outline: none; border-color: var(--primary-end);
+            box-shadow: 0 0 0 4px hsla(180, 100%, 50%, 0.2); /* Neon focus */
+        }
+        .auth-form-container .btn { width: 100%; margin-top: 1.5rem; padding: 1rem; }
+        .auth-form-container .switch-auth { text-align: center; margin-top: 2rem; color: var(--text-light); font-size: 0.9rem;}
+        .auth-form-container .error-message {
+             color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb;
+             padding: 0.8rem 1.25rem; border-radius: var(--border-radius-md); margin-bottom: 1.5rem;
+             text-align: center; font-size: 0.9rem;
+         }
+
+        /* --- Admin Section --- */
+         /* Adapt existing admin styles or apply new ones based on 'Flux' theme */
+         /* Example: Use cards for admin sections */
+        #admin-dashboard .admin-actions, #admin-upload form, #admin-view-courses ul, #admin-view-enrollments table {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium);
+            margin-top: 2rem;
+         }
+          #admin-upload .form-group input, #admin-upload .form-group textarea {
+             background-color: #fff; /* Ensure inputs are white */
+          }
+          #admin-view-enrollments th { background-color: #e9ecef; padding: 1rem; text-align: left; font-weight: 600; font-family: var(--font-heading); }
+          #admin-view-enrollments td { padding: 1rem; border-top: 1px solid #eee; }
+
+
+        /* --- Responsiveness --- */
+        @media (max-width: 992px) {
+             #course-details-page .course-content { grid-template-columns: 1fr; }
+             #course-details-page .course-actions { position: static; margin-top: 2.5rem; }
+             .main-nav { flex-wrap: wrap; }
+             .search-bar { order: 3; width: 100%; max-width: 100%; margin-top: 0.8rem; }
+        }
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+            .logo { font-size: 1.7rem; }
+            .search-bar { order: 1; flex-grow: 0; width: auto; margin: 0; transform: translateZ(10px);} /* Adjust Z */
+            .nav-toggle { order: 2; display: block; transform: translateZ(15px); }
+            .nav-links {
+                order: 3; display: none; flex-direction: column; width: 100%;
+                position: absolute; top: calc(100% + 10px); /* Offset below header */
+                left: 0; background: var(--card-bg);
+                box-shadow: var(--shadow-medium); padding: 1rem 0;
+                border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+                 /* Position in 3D space */
+                 transform: translateZ(5px);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links li { margin: 0.5rem 1.5rem; }
+            .nav-links a { transform: translateZ(0); } /* Reset Z for menu items */
+            .nav-links a:hover { transform: translateY(-2px) translateZ(5px); } /* Simpler hover in menu */
+
+            #home-page .hero { padding: 4.5rem 1rem; }
+            #home-page .hero h1 { font-size: 3rem; }
+            .section-title { font-size: 2.2rem; }
+             /* Simplify card hover on mobile */
+             .course-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-medium); border-color: transparent; }
+             .auth-form-container { padding: 2.5rem; }
+             /* Simplify header 3D slightly */
+             .main-header::before { transform: translateZ(-15px) scale(1.05); }
+             .main-header::after { transform: translateZ(-25px) scale(1.1); }
+        }
+         @media (max-width: 576px) {
+              #home-page .hero h1 { font-size: 2.5rem; }
+              #home-page .hero p { font-size: 1.1rem; }
+              .auth-form-container { padding: 2rem; margin: 2rem auto; }
+         }
+
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container main-nav">
+            <a href="#" class="logo nav-link" data-page="home-page">LearnSphere</a>
+
+            <div class="search-bar">
+                <span class="search-icon"></span>
+                <input type="search" placeholder="Search courses..." id="search-input">
+            </div>
+
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+            </button>
+
+            <ul class="nav-links" id="nav-links">
+                 <li><a href="#" class="nav-link active" data-page="home-page">Home</a></li>
+                 <li><a href="#" class="nav-link" data-page="browse-courses">Browse</a></li>
+                 <li><a href="#" class="nav-link" data-page="my-courses">My Courses</a></li>
+                 <li><a href="#" class="nav-link" data-page="admin-dashboard">Admin</a></li>
+                 <li><a href="#" class="nav-link" data-page="login-page">Login</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- Page sections below (content remains largely the same as v2, but will inherit new styles) -->
+        <!-- Add class 'animate-on-scroll' to elements you want to fade/slide in -->
+
+        <!-- === Home Page Section === -->
+        <section id="home-page" class="page-section active">
+            <div class="hero animate-on-scroll"> <!-- Example Scroll Animation Target -->
+                <div class="container">
+                    <h1>Unlock Your Potential</h1>
+                    <p>Explore expert-led courses with a futuristic learning experience. Begin your journey now.</p>
+                    <a href="#" class="btn btn-primary nav-link" data-page="browse-courses">Discover Courses</a>
+                </div>
+            </div>
+            <div class="container">
+                <h2 class="section-title animate-on-scroll">Featured Courses</h2>
+                <div class="course-grid">
+                    <!-- Add 'animate-on-scroll' to cards for staggered effect (needs JS) -->
+                    <div class="course-card animate-on-scroll">
+                        <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/1a237e/ffffff?text=Next.js+14" alt="Course Thumbnail"> </div>
+                        <div class="course-card-content"> <h3>Next.js 14 & React: Fullstack</h3> <p class="description">Build modern, fast, and scalable web applications using the latest features of Next.js and React.</p> <div class="course-meta"><span class="course-price">$149.99</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Explore</a></div> </div>
+                    </div>
+                    <div class="course-card animate-on-scroll" style="animation-delay: 0.1s;"> <!-- Stagger hint -->
+                         <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/00bcd4/ffffff?text=Cyber+Security" alt="Course Thumbnail"> </div>
+                         <div class="course-card-content"> <h3>Cyber Security Fundamentals</h3> <p class="description">Understand core cyber security concepts, threats, and defenses. Essential knowledge for everyone.</p> <div class="course-meta"><span class="course-price free">Free</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Start Free</a></div> </div>
+                    </div>
+                     <div class="course-card animate-on-scroll" style="animation-delay: 0.2s;">
+                         <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/9c27b0/ffffff?text=Figma+UI/UX" alt="Course Thumbnail"> </div>
+                         <div class="course-card-content"> <h3>UI/UX Design with Figma</h3> <p class="description">Master Figma from scratch. Learn design principles, prototyping, and creating stunning interfaces.</p> <div class="course-meta"><span class="course-price">$99.00</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Explore</a></div> </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === Browse Courses Section === -->
+         <section id="browse-courses" class="page-section">
+             <div class="container">
+                <h2 class="section-title animate-on-scroll">Explore All Courses</h2>
+                <div class="course-grid">
+                     <!-- Repeat cards, add 'animate-on-scroll' -->
+                     <div class="course-card animate-on-scroll"> <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/1a237e/ffffff?text=Next.js+14" alt="Course Thumbnail"> </div> <div class="course-card-content"> <h3>Next.js 14 & React: Fullstack</h3> <p class="description">Build modern, fast, and scalable web applications...</p> <div class="course-meta"><span class="course-price">$149.99</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Explore</a></div> </div> </div>
+                     <div class="course-card animate-on-scroll"> <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/00bcd4/ffffff?text=Cyber+Security" alt="Course Thumbnail"> </div> <div class="course-card-content"> <h3>Cyber Security Fundamentals</h3> <p class="description">Understand core cyber security concepts...</p> <div class="course-meta"><span class="course-price free">Free</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Start Free</a></div> </div> </div>
+                     <div class="course-card animate-on-scroll"> <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/9c27b0/ffffff?text=Figma+UI/UX" alt="Course Thumbnail"> </div> <div class="course-card-content"> <h3>UI/UX Design with Figma</h3> <p class="description">Master Figma from scratch. Learn design principles...</p> <div class="course-meta"><span class="course-price">$99.00</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Explore</a></div> </div> </div>
+                      <div class="course-card animate-on-scroll"> <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/4caf50/ffffff?text=Python+Automation" alt="Course Thumbnail"> </div> <div class="course-card-content"> <h3>Python Automation Masterclass</h3> <p class="description">Automate tedious tasks using Python scripts. Web scraping, file handling, and more.</p> <div class="course-meta"><span class="course-price">$119.00</span> <a href="#" class="btn btn-primary btn-sm nav-link" data-page="course-details-page">Explore</a></div> </div> </div>
+                 </div>
+            </div>
+        </section>
+
+
+        <!-- === My Courses Section === -->
+        <section id="my-courses" class="page-section">
+             <div class="container">
+                <h2 class="section-title animate-on-scroll">My Learning Dashboard</h2>
+                 <div class="course-grid">
+                     <!-- Show enrolled courses -->
+                      <div class="course-card animate-on-scroll"> <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/1a237e/ffffff?text=Next.js+14" alt="Course Thumbnail"> </div> <div class="course-card-content"> <h3>Next.js 14 & React: Fullstack</h3> <p class="description">Continue building modern web apps...</p> <div class="course-meta"><span class="course-price">Enrolled</span> <a href="#" class="btn btn-secondary btn-sm nav-link" data-page="course-details-page">Resume</a></div> </div> </div>
+                     <div class="course-card animate-on-scroll"> <div class="card-image-container"> <img src="https://via.placeholder.com/350x210/00bcd4/ffffff?text=Cyber+Security" alt="Course Thumbnail"> </div> <div class="course-card-content"> <h3>Cyber Security Fundamentals</h3> <p class="description">Review key security concepts...</p> <div class="course-meta"><span class="course-price free">Enrolled</span> <a href="#" class="btn btn-secondary btn-sm nav-link" data-page="course-details-page">Review</a></div> </div> </div>
+                 </div>
+                 <!-- Add empty state message -->
+                 <!-- <p class="animate-on-scroll" style="text-align: center; margin-top: 3rem; color: var(--text-light);">Your learning journey awaits! <a href="#" class="nav-link" data-page="browse-courses">Find your first course.</a></p> -->
+            </div>
+        </section>
+
+        <!-- === Course Details Page Section === -->
+        <section id="course-details-page" class="page-section">
+             <!-- JS Hint: Use this section ID for page transition target -->
+            <div class="container">
+                 <div class="course-hero-header animate-on-scroll">
+                    <h1>Next.js 14 & React: Fullstack</h1>
+                     <p class="uploader">Instructor: Alex Chen (Senior Software Engineer)</p>
+                 </div>
+
+                 <div class="course-content">
+                     <div class="course-main-area">
+                         <div class="video-container animate-on-scroll" id="video-player-wrapper">
+                              <!-- Add class 'video-playing-glow' via JS when playing -->
+                              <video id="course-video-player" controls controlsList="nodownload" style="display: block;" poster="https://via.placeholder.com/800x450/111111/cccccc?text=Premium+Video+Content">
+                                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"> <!-- Dummy -->
+                                Your browser needs to support HTML5 video.
+                              </video>
+                             <!-- Placeholder if not purchased -->
+                             <!-- <div class="video-placeholder"> Purchase this course to unlock video lessons! </div> -->
+                         </div>
+
+                         <!-- Custom Controls Placeholder (if not using default) -->
+                         <!-- <div class="custom-video-controls"> ... </div> -->
+
+                         <div class="course-description animate-on-scroll">
+                             <h2>Course Details</h2>
+                             <p>Dive deep into the world of modern fullstack development with Next.js 14 and React. Learn server components, client components, routing, data fetching, authentication, deployment, and much more through hands-on projects.</p>
+                             <h3>You will master:</h3>
+                              <ul>
+                                  <li>App Router vs Pages Router</li>
+                                  <li>Server Actions & Mutations</li>
+                                  <li>Advanced Data Fetching Patterns</li>
+                                  <li>Authentication with NextAuth.js</li>
+                                  <li>Styling with Tailwind CSS / CSS Modules</li>
+                                  <li>State Management Strategies</li>
+                                  <li>Deployment to Vercel</li>
+                              </ul>
+                         </div>
+                     </div>
+
+                     <aside class="course-actions animate-on-scroll">
+                        <div class="price" id="course-price">$149.99</div>
+                        <button id="buy-now-button" class="btn btn-primary" data-course-id="NEXTJS14">Enroll Now & Start Learning</button>
+                        <p style="font-size: 0.85rem; color: var(--text-medium); margin-top: 1rem;">Lifetime access & future updates</p>
+                        <div class="video-controls" id="video-controls-container">
+                             <label for="speed-control">Speed:</label>
+                             <select id="speed-control">
+                                 <option value="0.5">0.5x</option>
+                                 <option value="1" selected>1x</option>
+                                 <option value="1.25">1.25x</option>
+                                 <option value="1.5">1.5x</option>
+                                 <option value="2">2x</option>
+                             </select>
+                         </div>
+                     </aside>
+                 </div>
+            </div>
+        </section>
+
+        <!-- === Login Page Section === -->
+        <section id="login-page" class="page-section">
+             <!-- JS Hint: Use this section ID for page transition target -->
+            <div class="auth-form-container animate-on-scroll">
+                <h2>Welcome Back</h2>
+                <form action="/auth/login" method="POST">
+                     <div class="form-group"> <label for="login-email">Email Address</label> <input type="email" id="login-email" name="email" required placeholder="you@example.com"> </div>
+                     <div class="form-group"> <label for="login-password">Password</label> <input type="password" id="login-password" name="password" required placeholder="Enter password"> </div>
+                     <button type="submit" class="btn btn-primary">Secure Login</button>
+                </form>
+                <p class="switch-auth">First time here? <a href="#" class="nav-link" data-page="signup-page">Create an Account</a></p>
+            </div>
+        </section>
+
+        <!-- === Signup Page Section === -->
+        <section id="signup-page" class="page-section">
+             <!-- JS Hint: Use this section ID for page transition target -->
+             <div class="auth-form-container animate-on-scroll">
+                <h2>Create Your LearnSphere Account</h2>
+                <form action="/auth/signup" method="POST">
+                     <div class="form-group"> <label for="signup-username">Username</label> <input type="text" id="signup-username" name="username" required placeholder="Choose a unique username"> </div>
+                     <div class="form-group"> <label for="signup-email">Email Address</label> <input type="email" id="signup-email" name="email" required placeholder="your-email@example.com"> </div>
+                     <div class="form-group"> <label for="signup-password">Password</label> <input type="password" id="signup-password" name="password" required placeholder="Minimum 8 characters"> </div>
+                     <div class="form-group"> <label for="signup-confirm-password">Confirm Password</label> <input type="password" id="signup-confirm-password" name="confirmPassword" required placeholder="Re-enter your password"> </div>
+                     <button type="submit" class="btn btn-primary">Register Account</button>
+                </form>
+                 <p class="switch-auth">Already have an account? <a href="#" class="nav-link" data-page="login-page">Login</a></p>
+            </div>
+        </section>
+
+        <!-- === Admin Sections (Styled similarly) === -->
+         <section id="admin-dashboard" class="page-section">
+              <div class="container animate-on-scroll">
+                <h2 class="section-title">Admin Dashboard</h2>
+                 <div class="admin-actions" style="display: flex; justify-content: center; gap: 1.5rem; text-align: center;">
+                     <a href="#" class="btn btn-primary nav-link" data-page="admin-upload">Upload New Course</a>
+                     <a href="#" class="btn btn-secondary nav-link" data-page="admin-view-courses">Manage Courses</a>
+                 </div>
+             </div>
+        </section>
+
+         <section id="admin-upload" class="page-section">
+              <div class="container animate-on-scroll" style="max-width: 850px;">
+                  <h2 class="section-title">Upload New Course</h2>
+                  <form action="/admin/courses/new" method="POST" enctype="multipart/form-data">
+                       <!-- Form groups as before, inheriting new input/textarea styles -->
+                        <div class="form-group"> <label for="course-title">Course Title</label> <input type="text" id="course-title" name="title" required> </div>
+                        <div class="form-group"> <label for="course-description">Course Description</label> <textarea id="course-description" name="description" required rows="5"></textarea> </div>
+                        <div class="form-group"> <label for="course-price">Price ($) - 0 for free</label> <input type="number" id="course-price" name="price" step="0.01" min="0" required placeholder="e.g., 149.99"> </div>
+                        <div class="form-group"> <label for="course-thumbnail">Thumbnail Image</label> <input type="file" id="course-thumbnail" name="thumbnail" accept="image/*" required> </div>
+                        <div class="form-group"> <label for="course-video">Course Video</label> <input type="file" id="course-video" name="video" accept="video/*" required> </div>
+                        <button type="submit" class="btn btn-primary">Upload Course</button>
+                        <a href="#" class="nav-link btn btn-secondary btn-sm" data-page="admin-dashboard" style="margin-left: 1rem;">Cancel</a>
+                  </form>
+             </div>
+        </section>
+        <!-- Other Admin sections would follow similar styling -->
+
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>© 2023 LearnSphere Flux. Elevate Your Skills.</p>
+            <p> <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Contact</a> </p>
+        </div>
+    </footer>
+
+    <!-- JS Hint: Libraries like GSAP/Framer Motion would be included here -->
+    <!-- <script src="gsap.min.js"></script> -->
+    <!-- <script src="ScrollTrigger.min.js"></script> -->
+
+    <script>
+        // --- Mobile Menu Toggle ---
+        const navToggle = document.getElementById('nav-toggle');
+        const navLinks = document.getElementById('nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+        }
+
+        // --- Single-Page Navigation Simulation ---
+        const pageLinks = document.querySelectorAll('.nav-link');
+        const pageSections = document.querySelectorAll('.page-section');
+        const navLinkItems = document.querySelectorAll('.main-header .nav-links a');
+
+        function setActivePage(pageId) {
+            if (!pageId) pageId = 'home-page';
+             // JS Hint: Page Transition Start (e.g., fade out current)
+             // gsap.to('.page-section.active', { opacity: 0, duration: 0.3, onComplete: () => { ... show new page ... } });
+
+            pageSections.forEach(section => section.classList.remove('active'));
+            const targetSection = document.getElementById(pageId);
+            if (targetSection) {
+                 // Temporarily make visible for animation start (if needed by library)
+                targetSection.style.opacity = '0'; // Prepare for fade-in
+                targetSection.classList.add('active');
+                 // JS Hint: Page Transition In (e.g., fade in new)
+                 // gsap.to(targetSection, { opacity: 1, duration: 0.5, delay: 0.1 });
+                 targetSection.style.opacity = '1'; // Simple fallback for demo
+
+            } else {
+                document.getElementById('home-page')?.classList.add('active');
+            }
+
+            navLinkItems.forEach(link => {
+                 link.classList.remove('active');
+                 if (link.dataset.page === pageId) link.classList.add('active');
+             });
+
+            navLinks?.classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        pageLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const pageId = link.dataset.page;
+                if (pageId) { e.preventDefault(); setActivePage(pageId); }
+            });
+        });
+
+         // --- Video Player Speed Control & Glow Simulation ---
+         const speedControl = document.getElementById('speed-control');
+         const videoPlayer = document.getElementById('course-video-player');
+         const videoWrapper = document.getElementById('video-player-wrapper');
+
+         if (speedControl && videoPlayer) {
+             speedControl.addEventListener('change', (e) => {
+                 videoPlayer.playbackRate = parseFloat(e.target.value);
+             });
+         }
+         
+         // Simulate adding/removing glow class on play/pause for demo
+         if (videoPlayer && videoWrapper) {
+             videoPlayer.addEventListener('play', () => {
+                 videoWrapper.classList.add('video-playing-glow');
+                 console.log("DEMO: Added video glow class");
+             });
+              videoPlayer.addEventListener('pause', () => {
+                 videoWrapper.classList.remove('video-playing-glow');
+                  console.log("DEMO: Removed video glow class");
+             });
+              videoPlayer.addEventListener('ended', () => {
+                 videoWrapper.classList.remove('video-playing-glow');
+                 console.log("DEMO: Removed video glow class (ended)");
+             });
+         }
+
+         // --- Simulate Buy Button ---
+         const buyButton = document.getElementById('buy-now-button');
+         if(buyButton) {
+            buyButton.addEventListener('click', () => alert('DEMO: Initiate Purchase for ' + buyButton.dataset.courseId));
+         }
+
+        // --- JS Hint: Scroll Animation Trigger ---
+         const scrollElements = document.querySelectorAll('.animate-on-scroll');
+         const observer = new IntersectionObserver((entries) => {
+             entries.forEach(entry => {
+                 if (entry.isIntersecting) {
+                     entry.target.classList.add('is-visible');
+                     // Optional: Unobserve after animation
+                     // observer.unobserve(entry.target);
+                 }
+                 // Optional: Remove class if element scrolls out of view
+                 // else { entry.target.classList.remove('is-visible'); }
+             });
+         }, {
+             threshold: 0.1 // Trigger when 10% is visible
+         });
+         scrollElements.forEach(el => observer.observe(el));
+
+
+        // --- Initial Page Load ---
+        // setActivePage('home-page'); // Ensure home is active initially
+
+    </script>
+
+</body>
+</html>

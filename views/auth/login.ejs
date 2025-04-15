@@ -1,0 +1,33 @@
+<%- include('../partials/header', { title: 'Login' }) %>
+<%- include('../partials/navbar', { page: 'login', user: typeof user !== 'undefined' ? user : null }) %>
+
+<main>
+    <section id="login-page" class="page-section active">
+        <!-- Add animate-on-scroll if you want the form to fade in -->
+        <div class="auth-form-container animate-on-scroll">
+
+            <!-- EJS logic to display error messages passed from controller -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message"><%= error %></div>
+            <% } %>
+
+            <h2>Welcome Back!</h2>
+            <!-- Ensure form posts to the correct backend route -->
+            <form action="/auth/login" method="POST">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <!-- Input names must match what authController expects (email, password) -->
+                    <input type="email" id="login-email" name="email" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary">Secure Login</button>
+            </form>
+            <p class="switch-auth">New to LearnSphere? <a href="/auth/signup">Create an Account</a></p>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>

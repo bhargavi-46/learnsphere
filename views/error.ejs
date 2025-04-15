@@ -1,0 +1,15 @@
+<%- include('partials/header', { title: typeof title !== 'undefined' ? title : 'Error' }) %>
+<%- include('partials/navbar', { user: typeof user !== 'undefined' ? user : null }) %>
+
+<main>
+    <section class="page-section active" style="text-align: center; padding: 4rem 1rem;">
+        <div class="container">
+            <h2 class="section-title" style="color: #dc3545;"><%= typeof errorStatus !== 'undefined' ? errorStatus : 'Error' %></h2>
+            <p style="font-size: 1.2rem; color: var(--text-medium);"><%= typeof message !== 'undefined' ? message : 'An unexpected error occurred.' %></p>
+            <br>
+            <a href="/" class="btn btn-secondary">Go Home</a>
+        </div>
+    </section>
+</main>
+
+<%- include('partials/footer') %>

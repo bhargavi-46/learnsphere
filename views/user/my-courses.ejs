@@ -1,0 +1,35 @@
+<!-- views/user/my-courses.ejs -->
+<%- include('../partials/header', { title: 'My Courses' }) %>
+<%- include('../partials/navbar', { page: 'my-courses', user: user }) %>
+
+<main>
+    <section id="my-courses" class="page-section active">
+         <div class="container">
+            <h2 class="section-title animate-on-scroll">My Learning</h2>
+             <div class="course-grid">
+                 <% if (typeof courses !== 'undefined' && courses.length > 0) { %>
+                     <% courses.forEach((course, index) => { %>
+                         <div class="course-card animate-on-scroll" style="animation-delay: <%= (index % 3) * 0.1 %>s;">
+                             <div class="card-image-container">
+                                 <img src="<%= course.thumbnailUrl %>" alt="<%= course.title %> Thumbnail">
+                             </div>
+                             <div class="course-card-content">
+                                 <h3><%= course.title %></h3>
+                                 <p class="description">Continue where you left off, or review modules...</p>
+                                 <div class="course-meta">
+                                     <span class="course-price"><%= course.price === 0 ? 'Enrolled (Free)' : 'Enrolled' %></span>
+                                     <!-- Link to the actual course page -->
+                                     <a href="/courses/<%= course._id %>" class="btn btn-secondary btn-sm">Watch Now</a>
+                                 </div>
+                             </div>
+                         </div>
+                     <% }); %>
+                 <% } else { %>
+                     <p class="animate-on-scroll" style="grid-column: 1 / -1; text-align: center; color: var(--text-light);">You haven't enrolled in any courses yet. <a href="/courses">Start exploring!</a></p>
+                 <% } %>
+             </div>
+         </div>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>

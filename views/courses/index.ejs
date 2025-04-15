@@ -1,0 +1,45 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar', { page: page, user: user }) %>
+
+<main>
+    <section id="browse-courses" class="page-section active">
+         <div class="container">
+            <h2 class="section-title animate-on-scroll">Explore All Courses</h2>
+
+            <!-- Display error message if passed from controller -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="animate-on-scroll" style="text-align: center; color: #dc3545; background-color: #f8d7da; padding: 1rem; border-radius: var(--border-radius-md); margin-bottom: 1.5rem;"><%= error %></p>
+            <% } %>
+
+            <!-- Add Filtering/Sorting options form here later -->
+            <div class="course-grid">
+                <% if (typeof courses !== 'undefined' && courses.length > 0) { %>
+                    <% courses.forEach((course, index) => { %> <!-- Loop through ALL courses -->
+                        <div class="course-card animate-on-scroll" style="animation-delay: <%= (index % 3) * 0.1 %>s;">
+                            <div class="card-image-container">
+                                <img src="<%= course.thumbnailUrl || 'https://via.placeholder.com/350x210/cccccc/999999?text=No+Image' %>" alt="<%= course.title %> Thumbnail">
+                            </div>
+                            <div class="course-card-content">
+                                <h3><%= course.title %></h3>
+                                <p class="description"><%= course.description.length > 120 ? course.description.substring(0, 120) + '...' : course.description %></p>
+                                <div class="course-meta">
+                                    <% if (course.price === 0) { %>
+                                        <span class="course-price free">Free</span>
+                                        <a href="/courses/<%= course._id %>" class="btn btn-primary btn-sm">Start Free</a>
+                                    <% } else { %>
+                                        <span class="course-price">$<%= course.price.toFixed(2) %></span>
+                                        <a href="/courses/<%= course._id %>" class="btn btn-primary btn-sm">Explore</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else if (!error) { %> <!-- Only show 'No courses' if there wasn't an error -->
+                    <p class="animate-on-scroll" style="grid-column: 1 / -1; text-align: center; color: var(--text-light);">No courses found matching your criteria.</p>
+                <% } %>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>

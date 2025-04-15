@@ -1,0 +1,54 @@
+<header class="main-header">
+    <div class="container main-nav">
+        <a href="/" class="logo">LearnSphere</a>
+
+        <!-- Search Form (Visible to both, assuming search results page handles roles) -->
+        <form action="/courses/search" method="GET" class="search-bar">
+            <span class="search-icon"></span> <!-- Add actual icon here -->
+            <input type="search" name="query" placeholder="Search courses..." id="search-input" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" required>
+        </form>
+
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <!-- Hamburger SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+        </button>
+
+        <ul class="nav-links" id="nav-links">
+
+            <% if (typeof user !== 'undefined' && user) { %>
+                <!-- ==== Logged In User ==== -->
+
+                <!-- Common Links for Both Logged-in Roles -->
+                <li><a href="/" class="nav-link <% if (typeof page !== 'undefined' && page === 'home') { %>active<% } %>">Home</a></li>
+                 <!-- Search is already outside, can remove from here if redundant -->
+
+                <% if (user.role === 'admin') { %>
+                    <!-- ==== ADMIN ONLY Links ==== -->
+                    <!-- Maybe link directly to admin dashboard instead of home? -->
+                    <!-- Or keep Home? Depends on desired flow -->
+                    <li><a href="/admin/dashboard" class="nav-link <% if (typeof page !== 'undefined' && page === 'admin') { %>active<% } %>">Dashboard</a></li>
+                    <!-- Add other admin specific links here if needed -->
+
+                <% } else { %>
+                    <!-- ==== USER (Student) ONLY Links ==== -->
+                    <li><a href="/courses" class="nav-link <% if (typeof page !== 'undefined' && page === 'browse') { %>active<% } %>">Browse</a></li>
+                    <li><a href="/courses/my-courses" class="nav-link <% if (typeof page !== 'undefined' && page === 'my-courses') { %>active<% } %>">My Courses</a></li>
+                     <li><a href="/user/dashboard" class="nav-link <% if (typeof page !== 'undefined' && page === 'user-dashboard') { %>active<% } %>">My Dashboard</a></li>
+                    <!-- Add other user specific links here (e.g., Profile) -->
+
+                <% } %>
+
+                <!-- Common Logout for Both Logged-in Roles -->
+                 <li style="padding: 0.5rem 0.2rem; color: var(--text-dark); font-weight: 500; transform: translateZ(15px); display: flex; align-items: center;">Hi, <%= user.username %></li>
+                 <li><a href="/auth/logout" class="nav-link">Logout</a></li>
+
+            <% } else { %>
+                <!-- ==== Logged Out User ==== -->
+                 <li><a href="/" class="nav-link <% if (typeof page !== 'undefined' && page === 'home') { %>active<% } %>">Home</a></li>
+                 <li><a href="/courses" class="nav-link <% if (typeof page !== 'undefined' && page === 'browse') { %>active<% } %>">Browse</a></li>
+                 <li><a href="/auth/login" class="nav-link <% if (typeof page !== 'undefined' && page === 'login') { %>active<% } %>">Login</a></li>
+                 <li><a href="/auth/signup" class="btn btn-primary btn-sm" style="margin-left: 1rem;">Sign Up</a></li>
+            <% } %>
+        </ul>
+    </div>
+</header>

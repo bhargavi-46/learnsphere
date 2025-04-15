@@ -1,0 +1,47 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar', { page: 'admin', user: user }) %>
+
+<main>
+    <section id="admin-edit-course" class="page-section active animate-on-scroll">
+        <div class="container" style="max-width: 800px;">
+            <h2 class="section-title">Edit Course: <%= course.title %></h2>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+               <div class="error-message" style="max-width: 100%; margin-bottom: 1.5rem;"><%= error %></div>
+            <% } %>
+
+            <!-- Form submits to the update route -->
+            <form action="/admin/courses/<%= course._id %>/edit" method="POST" enctype="multipart/form-data" style="background: var(--card-bg); padding: 2.5rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
+
+                <div class="form-group">
+                   <label for="course-title">Course Title</label>
+                   <input type="text" id="course-title" name="title" required value="<%= course.title %>">
+                </div>
+                <div class="form-group">
+                   <label for="course-description">Course Description</label>
+                   <textarea id="course-description" name="description" required rows="5"><%= course.description %></textarea>
+                </div>
+                <div class="form-group">
+                   <label for="course-price">Price ($) - Enter 0 for free</label>
+                   <input type="number" id="course-price" name="price" step="0.01" min="0" required placeholder="e.g., 49.99" value="<%= course.price %>">
+                </div>
+                <div class="form-group">
+                   <label for="course-thumbnail">Current Thumbnail</label>
+                   <img src="<%= course.thumbnailUrl %>" alt="Current Thumbnail" style="max-width: 200px; display: block; margin-bottom: 0.5rem; border-radius: 4px;">
+                   <label for="new-course-thumbnail">Upload New Thumbnail (Optional - Replaces existing)</label>
+                   <input type="file" id="new-course-thumbnail" name="thumbnail" accept="image/jpeg, image/png, image/gif" style="padding: 0.5rem; border: 1px dashed var(--border-color); background-color: var(--bg-off-white);">
+               </div>
+                <div class="form-group">
+                   <label>Current Video</label>
+                   <p style="font-size: 0.9em; word-break: break-all;"><%= course.videoUrl %></p> <%# Just show URL, maybe link? %>
+                   <label for="new-course-video">Upload New Video (Optional - Replaces existing)</label>
+                   <input type="file" id="new-course-video" name="video" accept="video/*" style="padding: 0.5rem; border: 1px dashed var(--border-color); background-color: var(--bg-off-white);">
+               </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Update Course</button>
+                <a href="/admin/courses" class="btn btn-secondary btn-sm" style="margin-left: 1rem; vertical-align: middle;">Cancel</a>
+            </form>
+       </div>
+   </section>
+</main>
+
+<%- include('../partials/footer') %>

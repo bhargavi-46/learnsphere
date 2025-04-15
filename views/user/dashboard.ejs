@@ -1,0 +1,68 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/navbar', { page: page, user: user }) %>
+
+<main>
+    <section id="user-dashboard" class="page-section active">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">My Dashboard</h2>
+
+            <!-- Welcome Section -->
+            <div class="dashboard-welcome animate-on-scroll">
+                <h3>Welcome back, <%= user.username %>!</h3>
+                <p>Ready to continue your learning journey?</p>
+            </div>
+
+            <!-- Display error message if passed from controller -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="animate-on-scroll error-message" style="text-align: center; margin-bottom: 1.5rem;"><%= error %></p>
+            <% } %>
+
+            <!-- Continue Learning Section -->
+            <div class="dashboard-section animate-on-scroll">
+                <h4 class="dashboard-section-title">Continue Learning</h4>
+                <% if (typeof enrollments !== 'undefined' && enrollments.length > 0) { %>
+                    <div class="dashboard-course-list">
+                        <% enrollments.forEach(enrollment => { %>
+                            <% const course = enrollment.course; %> <%# Alias for easier access %>
+                            <% if (course) { %> <%# Ensure course data exists %>
+                                <div class="dashboard-course-item">
+                                    <div class="dashboard-course-thumb">
+                                        <a href="/courses/<%= course._id %>">
+                                            <img src="<%= course.thumbnailUrl || 'https://via.placeholder.com/150x84/cccccc/999999?text=No+Thumb' %>" alt="<%= course.title %>">
+                                        </a>
+                                    </div>
+                                    <div class="dashboard-course-details">
+                                        <h5><a href="/courses/<%= course._id %>"><%= course.title %></a></h5>
+                                        <!-- Progress Bar Placeholder -->
+                                        <div class="progress-bar-container" title="Progress tracking coming soon!">
+                                            <%# Example: Assume enrollment object will have progress later %>
+                                            <% let progressPercent = enrollment.progressPercentage || 0; %>
+                                            <div class="progress-bar-fill" style="width: <%= progressPercent %>%;"></div>
+                                        </div>
+                                        <span class="progress-text"><%= progressPercent %>% Complete</span> <%# Placeholder text %>
+                                    </div>
+                                    <div class="dashboard-course-action">
+                                         <a href="/courses/<%= course._id %>" class="btn btn-primary btn-sm">Resume</a>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% }); %>
+                    </div>
+                    <div class="dashboard-view-all">
+                        <a href="/courses/my-courses" class="btn btn-secondary">View All My Courses</a>
+                    </div>
+                <% } else if (!error) { %>
+                    <div class="dashboard-empty-state">
+                        <p>You haven't started any courses yet.</p>
+                        <a href="/courses" class="btn btn-primary">Explore Courses</a>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Add more dashboard sections here later (e.g., Achievements, Recommendations) -->
+
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/footer') %>
